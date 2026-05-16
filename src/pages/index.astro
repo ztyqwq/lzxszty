@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const entries = [
+	{
+		title: 'Timeline',
+		label: '时间轴',
+		text: '公开的大事记、共同经历和纪念节点。',
+	},
+	{
+		title: 'Memories',
+		label: '共同记忆',
+		text: '电影、歌单、地点、礼物和一些轻量记录。',
+	},
+	{
+		title: 'Garden',
+		label: '小花园',
+		text: '数字盆栽、BGM 和一点点平静的氛围变化。',
+	},
+	{
+		title: 'Private',
+		label: '私密层',
+		text: '以后再做加密访问；现在先不要发布明文内容。',
+	},
+];
+---
+
+<Layout title="lzxszty" description="lzxszty 的独立恋爱区入口。">
+	<main class="shell">
+		<section class="hero" aria-labelledby="site-title">
+			<p class="eyebrow">lzxszty</p>
+			<h1 id="site-title">一些共同生活的存档</h1>
+			<p class="lead">这里先作为独立恋爱区的入口，后续慢慢放时间轴、共同记忆、相册和私密内容。</p>
+		</section>
+
+		<nav class="directory" aria-label="恋爱区目录">
+			{
+				entries.map((entry) => (
+					<a class="row" href="#">
+						<span class="row-title">{entry.title}</span>
+						<span class="row-label">{entry.label}</span>
+						<span class="row-text">{entry.text}</span>
+					</a>
+				))
+			}
+		</nav>
+	</main>
+</Layout>
+
+<style>
+	.shell {
+		width: min(960px, calc(100% - 40px));
+		margin: 0 auto;
+		padding: 14vh 0 5rem;
+	}
+
+	.hero {
+		max-width: 680px;
+		margin-bottom: 4rem;
+	}
+
+	.eyebrow {
+		margin: 0 0 0.8rem;
+		color: #a56f7f;
+		font-size: 0.92rem;
+		font-weight: 650;
+		letter-spacing: 0;
+	}
+
+	h1 {
+		margin: 0;
+		color: #3f3136;
+		font-size: clamp(2.2rem, 7vw, 4.6rem);
+		font-weight: 620;
+		line-height: 1.12;
+		letter-spacing: 0;
+	}
+
+	.lead {
+		margin: 1.4rem 0 0;
+		color: #705d64;
+		font-size: 1.05rem;
+		line-height: 1.85;
+	}
+
+	.directory {
+		border-top: 1px solid rgba(143, 98, 112, 0.22);
+	}
+
+	.row {
+		display: grid;
+		grid-template-columns: 10rem 8rem 1fr;
+		gap: 1.2rem;
+		padding: 1.35rem 0;
+		border-bottom: 1px solid rgba(143, 98, 112, 0.18);
+		text-decoration: none;
+		transition:
+			background-color 160ms ease,
+			padding-left 160ms ease;
+	}
+
+	.row:hover,
+	.row:focus-visible {
+		padding-left: 0.7rem;
+		background: rgba(255, 255, 255, 0.55);
+		outline: none;
+	}
+
+	.row-title {
+		color: #4b373d;
+		font-weight: 680;
+	}
+
+	.row-label,
+	.row-text {
+		color: #705d64;
+		line-height: 1.65;
+	}
+
+	@media (max-width: 720px) {
+		.shell {
+			width: min(100% - 28px, 620px);
+			padding-top: 10vh;
+		}
+
+		.row {
+			grid-template-columns: 1fr;
+			gap: 0.35rem;
+		}
+	}
+</style>
