@@ -41,13 +41,13 @@ npm run dev
 
 ## Deployment
 
-这个仓库是 GitHub Pages project site，默认公开地址会是：
+这个仓库使用 GitHub Pages 和自定义域名：
 
 ```text
-https://ztyqwq.github.io/lzxszty/
+https://lzxszty.love/
 ```
 
-Astro 已配置 `base: '/lzxszty'`。
+Astro 以自定义域名根路径发布，因此不配置 `base`。
 
 ## Privacy
 
