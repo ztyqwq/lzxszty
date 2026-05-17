@@ -1,0 +1,86 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+const whispers = [
+	{ side: 'left', text: '这里以后可以放一句很短的话。', time: '09:20', reactions: ['🌷', '🍓'] },
+	{ side: 'right', text: '也可以像聊天一样回复。', time: '09:24', reactions: ['🐾'] },
+	{ side: 'left', text: '小猫主题可以之后单独做一套表情和气泡。', time: '09:26', reactions: [] },
+];
+---
+
+<Layout title="碎碎念" description="轻量的一句话记录。">
+	<main class="page-shell whisper-shell">
+		<header class="page-hero">
+			<p class="eyebrow">Whisper</p>
+			<h1 class="page-title">碎碎念</h1>
+			<p class="page-lead">轻量版日常，不做详情页，先按聊天界面排布。</p>
+		</header>
+
+		<section class="chat-panel soft-panel" aria-label="碎碎念消息">
+			{whispers.map((item) => (
+				<article class={`bubble bubble-${item.side}`}>
+					<p>{item.text}</p>
+					<footer>
+						<time>{item.time}</time>
+						<span class="reaction-list">
+							{item.reactions.map((reaction) => <button type="button">{reaction}</button>)}
+							<button type="button" aria-label="添加表情">+</button>
+						</span>
+					</footer>
+				</article>
+			))}
+		</section>
+	</main>
+</Layout>
+
+<style>
+	.whisper-shell {
+		max-width: 860px;
+	}
+
+	.chat-panel {
+		display: flex;
+		flex-direction: column;
+		gap: 1rem;
+		padding: 1.3rem;
+	}
+
+	.bubble {
+		max-width: min(78%, 560px);
+		padding: 0.9rem 1rem;
+		background: white;
+		border: 1px solid var(--line);
+	}
+
+	.bubble-right {
+		align-self: flex-end;
+		background: color-mix(in srgb, var(--accent-soft) 82%, white 18%);
+	}
+
+	.bubble p {
+		margin: 0;
+		line-height: 1.75;
+	}
+
+	.bubble footer {
+		display: flex;
+		gap: 0.8rem;
+		align-items: center;
+		justify-content: space-between;
+		margin-top: 0.7rem;
+		color: var(--muted);
+		font-size: 0.86rem;
+	}
+
+	.reaction-list {
+		display: flex;
+		gap: 0.3rem;
+	}
+
+	.reaction-list button {
+		border: 1px solid var(--line);
+		border-radius: 999px;
+		background: rgba(255, 255, 255, 0.72);
+		color: var(--muted);
+	}
+</style>

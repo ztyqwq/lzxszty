@@ -1,0 +1,118 @@
+---
+import { posts } from '../../data/posts';
+import Layout from '../../layouts/Layout.astro';
+
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+	? import.meta.env.BASE_URL
+	: `${import.meta.env.BASE_URL}/`;
+
+const postsPerPage = 6;
+const totalPages = Math.max(1, Math.ceil(posts.length / postsPerPage));
+const visiblePosts = posts.slice(0, postsPerPage);
+---
+
+<Layout title="日常" description="两个人发布日记、旅行记录和想说的话的地方。">
+	<main class="page-shell">
+		<header class="page-hero">
+			<p class="eyebrow">Post</p>
+			<h1 class="page-title">日常</h1>
+			<p class="page-lead">像传统博客一样，一条一条打开看；现在先放两篇占位笔记，之后可以接 Markdown。</p>
+		</header>
+
+		<section class="post-list row-list" aria-label="日常笔记列表">
+			{
+				visiblePosts.map((post) => (
+					<a class="post-row" href={`${baseUrl}post/${post.slug}/`}>
+						<time datetime={post.date}>{post.date}</time>
+						<span class="post-main">
+							<span class="post-title">{post.title}</span>
+							<span class="post-summary">{post.summary}</span>
+						</span>
+						<span class="post-tags">
+							{post.tags.map((tag) => (
+								<span>#{tag}</span>
+							))}
+						</span>
+					</a>
+				))
+			}
+		</section>
+
+		<nav class="pager" aria-label="日常分页">
+			<span>第 1 页 / 共 {totalPages} 页</span>
+			<button type="button" disabled>上一页</button>
+			<button type="button" disabled>下一页</button>
+		</nav>
+	</main>
+</Layout>
+
+<style>
+	.post-row {
+		display: grid;
+		grid-template-columns: 8rem minmax(0, 1fr) minmax(10rem, 0.35fr);
+		gap: 1.5rem;
+		align-items: center;
+		padding: 1.35rem 0;
+		border-bottom: 1px solid var(--line);
+		text-decoration: none;
+	}
+
+	.post-row:hover .post-title,
+	.post-row:focus-visible .post-title {
+		color: var(--accent-strong);
+	}
+
+	time {
+		color: var(--muted);
+		font-family: 'Times New Roman', ui-serif, Georgia, serif;
+	}
+
+	.post-main {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 0.35rem;
+	}
+
+	.post-title {
+		color: var(--text);
+		font-size: 1.15rem;
+		font-weight: 700;
+	}
+
+	.post-summary {
+		color: var(--muted);
+		line-height: 1.7;
+	}
+
+	.post-tags {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+		color: var(--muted);
+		font-size: 0.9rem;
+	}
+
+	.pager {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.7rem;
+		align-items: center;
+		margin-top: 1.6rem;
+		color: var(--muted);
+	}
+
+	.pager button {
+		border: 1px solid var(--line);
+		background: var(--surface);
+		color: var(--muted);
+		padding: 0.5rem 0.7rem;
+	}
+
+	@media (max-width: 760px) {
+		.post-row {
+			grid-template-columns: 1fr;
+			gap: 0.45rem;
+		}
+	}
+</style>

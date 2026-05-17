@@ -1,4 +1,7 @@
 ---
+import { navItems } from '../data/navigation';
+import '../styles/global.css';
+
 interface Props {
 	title?: string;
 	description?: string;
@@ -13,6 +16,23 @@ const pageTitle = title === 'lzxszty' ? title : `${title} | lzxszty`;
 const baseUrl = import.meta.env.BASE_URL.endsWith('/')
 	? import.meta.env.BASE_URL
 	: `${import.meta.env.BASE_URL}/`;
+
+const normalizedPath = Astro.url.pathname.endsWith('/')
+	? Astro.url.pathname
+	: `${Astro.url.pathname}/`;
+
+function hrefWithBase(href: string) {
+	const cleanHref = href.startsWith('/') ? href.slice(1) : href;
+	return `${baseUrl}${cleanHref}`;
+}
+
+function isActive(href: string) {
+	const target = hrefWithBase(href);
+	if (href === '/') {
+		return normalizedPath === baseUrl;
+	}
+	return normalizedPath.startsWith(target);
+}
 ---
 
 <!doctype html>
@@ -27,36 +47,159 @@ const baseUrl = import.meta.env.BASE_URL.endsWith('/')
 		<title>{pageTitle}</title>
 	</head>
 	<body>
+		<div class="nav-peek-zone" aria-hidden="false">
+			<button class="nav-toggle" type="button" aria-label="隐藏导航栏" data-nav-toggle>
+				<span class="eye-shape" aria-hidden="true"></span>
+			</button>
+		</div>
+
+		<header class="site-header" data-site-header>
+			<div class="site-header-inner">
+				<div class="site-title-row">
+					<a class="site-title" href={baseUrl}>这里先放一个标题</a>
+
+					<details class="site-settings">
+						<summary>设置</summary>
+						<div class="settings-popover">
+							<div class="settings-group">
+								<span class="settings-label">导航显示</span>
+								<div class="mode-buttons" role="group" aria-label="导航显示模式">
+									<button class="mode-button" type="button" data-mode-option="text">文字</button>
+									<button class="mode-button" type="button" data-mode-option="emoji">Emoji</button>
+								</div>
+							</div>
+
+							<div class="settings-group">
+								<span class="settings-label">主题颜色</span>
+								<div class="theme-buttons" role="group" aria-label="主题颜色">
+									<button
+										class="theme-button"
+										type="button"
+										data-theme-option="pink"
+										aria-label="浅粉色"
+										style="--swatch: #d8849a"
+									></button>
+									<button
+										class="theme-button"
+										type="button"
+										data-theme-option="blue"
+										aria-label="浅蓝色"
+										style="--swatch: #7fa8d8"
+									></button>
+									<button
+										class="theme-button"
+										type="button"
+										data-theme-option="sage"
+										aria-label="浅绿色"
+										style="--swatch: #8aaa86"
+									></button>
+									<button
+										class="theme-button"
+										type="button"
+										data-theme-option="paper"
+										aria-label="纸张色"
+										style="--swatch: #c7a876"
+									></button>
+								</div>
+							</div>
+						</div>
+					</details>
+				</div>
+
+				<nav class="site-nav" aria-label="主导航">
+					{
+						navItems.map((item) => (
+							<a href={hrefWithBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
+								<span class="nav-label">{item.label}</span>
+								<span class="nav-emoji" aria-label={item.label}>
+									{item.emoji}
+								</span>
+							</a>
+						))
+					}
+				</nav>
+			</div>
+		</header>
+
 		<slot />
+		<script>
+			const root = document.documentElement;
+			const navToggle = document.querySelector('[data-nav-toggle]');
+			const themes = {
+				pink: {
+					accent: '#d8849a',
+					strong: '#b96378',
+					soft: '#fff4f7',
+					wash: '#fff8fa',
+					text: '#3f3136',
+					muted: '#745f67',
+				},
+				blue: {
+					accent: '#7fa8d8',
+					strong: '#4f7faf',
+					soft: '#eef7ff',
+					wash: '#f7fbff',
+					text: '#283846',
+					muted: '#607485',
+				},
+				sage: {
+					accent: '#8aaa86',
+					strong: '#607f5d',
+					soft: '#f2f8f0',
+					wash: '#fbfdf8',
+					text: '#2f3b31',
+					muted: '#657264',
+				},
+				paper: {
+					accent: '#c7a876',
+					strong: '#957446',
+					soft: '#fbf5e8',
+					wash: '#fffdf8',
+					text: '#40372b',
+					muted: '#756a5b',
+				},
+			};
+
+			function applyTheme(name) {
+				const theme = themes[name] || themes.pink;
+				root.style.setProperty('--accent', theme.accent);
+				root.style.setProperty('--accent-strong', theme.strong);
+				root.style.setProperty('--accent-soft', theme.soft);
+				root.style.setProperty('--accent-wash', theme.wash);
+				root.style.setProperty('--text', theme.text);
+				root.style.setProperty('--muted', theme.muted);
+				root.style.setProperty('--line', `color-mix(in srgb, ${theme.strong} 22%, transparent)`);
+				localStorage.setItem('lzxszty-theme', name);
+			}
+
+			function applyMode(mode) {
+				root.dataset.navMode = mode === 'emoji' ? 'emoji' : 'text';
+				localStorage.setItem('lzxszty-nav-mode', root.dataset.navMode);
+			}
+
+			function applyHidden(hidden) {
+				root.dataset.navHidden = hidden ? 'true' : 'false';
+				if (navToggle) {
+					navToggle.setAttribute('aria-label', hidden ? '显示导航栏' : '隐藏导航栏');
+				}
+				localStorage.setItem('lzxszty-nav-hidden', hidden ? 'true' : 'false');
+			}
+
+			applyTheme(localStorage.getItem('lzxszty-theme') || 'pink');
+			applyMode(localStorage.getItem('lzxszty-nav-mode') || 'text');
+			applyHidden(localStorage.getItem('lzxszty-nav-hidden') === 'true');
+
+			document.querySelectorAll('[data-theme-option]').forEach((button) => {
+				button.addEventListener('click', () => applyTheme(button.dataset.themeOption));
+			});
+
+			document.querySelectorAll('[data-mode-option]').forEach((button) => {
+				button.addEventListener('click', () => applyMode(button.dataset.modeOption));
+			});
+
+			navToggle?.addEventListener('click', () => {
+				applyHidden(root.dataset.navHidden !== 'true');
+			});
+		</script>
 	</body>
 </html>
-
-<style>
-	html,
-	body {
-		margin: 0;
-		width: 100%;
-		min-height: 100%;
-		background: #fff8fa;
-		color: #3f3136;
-		font-family:
-			Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-	}
-
-	html {
-		scroll-behavior: smooth;
-	}
-
-	body {
-		text-rendering: optimizeLegibility;
-		-webkit-font-smoothing: antialiased;
-	}
-
-	:global(*) {
-		box-sizing: border-box;
-	}
-
-	:global(a) {
-		color: inherit;
-	}
-</style>

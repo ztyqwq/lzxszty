@@ -1,0 +1,124 @@
+---
+import { timelineEvents } from '../data/timeline';
+import Layout from '../layouts/Layout.astro';
+
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+	? import.meta.env.BASE_URL
+	: `${import.meta.env.BASE_URL}/`;
+---
+
+<Layout title="时间线" description="记录在一起的重要节点。">
+	<main class="page-shell timeline-shell">
+		<header class="page-hero">
+			<p class="eyebrow">Timeline</p>
+			<h1 class="page-title">时间线</h1>
+			<p class="page-lead">横向延伸的事件线。鼠标放在时间线区域内滚动，可以左右移动。</p>
+		</header>
+
+		<section class="timeline-frame soft-panel" aria-label="恋爱时间线" data-horizontal-timeline>
+			<div class="timeline-track">
+				{timelineEvents.map((event) => (
+					<a class={`timeline-event event-${event.importance}`} href={`${baseUrl}post/${event.postSlug}/`}>
+						<img src={`${baseUrl}${event.image}`} alt="" />
+						<span class="event-date">{event.date}</span>
+						<strong>{event.title}</strong>
+						<span>{event.text}</span>
+					</a>
+				))}
+			</div>
+		</section>
+	</main>
+
+	<script>
+		const timeline = document.querySelector('[data-horizontal-timeline]');
+		timeline?.addEventListener(
+			'wheel',
+			(event) => {
+				if (!(event instanceof WheelEvent)) return;
+				event.preventDefault();
+				timeline.scrollLeft += event.deltaY + event.deltaX;
+			},
+			{ passive: false },
+		);
+	</script>
+</Layout>
+
+<style>
+	.timeline-shell {
+		width: min(100%, 1280px);
+	}
+
+	.timeline-shell .page-hero {
+		margin-left: max(20px, calc((100% - 1120px) / 2));
+	}
+
+	.timeline-frame {
+		overflow-x: auto;
+		margin-left: max(20px, calc((100% - 1120px) / 2));
+		padding: 3rem 2rem;
+	}
+
+	.timeline-track {
+		position: relative;
+		display: flex;
+		gap: 4rem;
+		min-width: 980px;
+		padding: 3.5rem 3rem;
+	}
+
+	.timeline-track::before {
+		position: absolute;
+		top: 50%;
+		left: 0;
+		right: 0;
+		height: 2px;
+		background: var(--line);
+		content: '';
+	}
+
+	.timeline-event {
+		position: relative;
+		z-index: 1;
+		display: flex;
+		width: 16rem;
+		flex: 0 0 auto;
+		flex-direction: column;
+		gap: 0.45rem;
+		padding: 1rem;
+		border: 1px solid var(--line);
+		background: rgba(255, 255, 255, 0.86);
+		color: var(--muted);
+		text-decoration: none;
+	}
+
+	.timeline-event:nth-child(odd) {
+		transform: translateY(-2.6rem);
+	}
+
+	.timeline-event:nth-child(even) {
+		transform: translateY(2.6rem);
+	}
+
+	.event-large {
+		width: 20rem;
+	}
+
+	.event-small {
+		width: 13rem;
+	}
+
+	.timeline-event img {
+		width: 100%;
+		aspect-ratio: 5 / 3;
+		object-fit: cover;
+	}
+
+	.event-date {
+		color: var(--accent-strong);
+		font-family: 'Times New Roman', ui-serif, Georgia, serif;
+	}
+
+	.timeline-event strong {
+		color: var(--text);
+	}
+</style>

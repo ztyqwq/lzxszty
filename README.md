@@ -1,6 +1,6 @@
 # lzxszty
 
-独立的恋爱区静态站。当前只是 Astro 骨架和一个占位首页，后续再补时间轴、相册、共同记忆和私密层。
+独立的恋爱区静态站。当前包括首页、日常、数据、时间线、碎碎念、关于、成就和小游戏等基础入口。
 
 ## Commands
 
@@ -15,9 +15,29 @@ npm run preview
 
 ```sh
 cd /mnt/d/ztyqwqSite/lzxszty
+. ~/.nvm/nvm.sh
+nvm use 22
 npm ci
 npm run dev
 ```
+
+## Routes
+
+```text
+/
+/post/
+/post/:slug/
+/stat/
+/timeline/
+/whisper/
+/about/
+/achievement/
+/game/
+```
+
+## Materials
+
+首页素材库放在 `public/materials/`。当前只有一张占位爱心图，首页每次载入会从素材库里随机挑选一张图。
 
 ## Deployment
 
