@@ -1,0 +1,493 @@
+---
+import { navItems } from '../data/navigation';
+import '../styles/global.css';
+
+interface Props {
+	title?: string;
+	description?: string;
+}
+
+const {
+	title = 'lzxszty',
+	description = '一个独立的私密静态站。',
+} = Astro.props;
+
+const pageTitle = title === 'lzxszty' ? title : `${title} | lzxszty`;
+const baseUrl = import.meta.env.BASE_URL.endsWith('/')
+	? import.meta.env.BASE_URL
+	: `${import.meta.env.BASE_URL}/`;
+
+const normalizedPath = Astro.url.pathname.endsWith('/')
+	? Astro.url.pathname
+	: `${Astro.url.pathname}/`;
+
+function hrefWithBase(href: string) {
+	if (href.startsWith('#')) return `${baseUrl}${href}`;
+	const cleanHref = href.startsWith('/') ? href.slice(1) : href;
+	return `${baseUrl}${cleanHref}`;
+}
+
+function isActive(href: string) {
+	if (href.startsWith('#')) return href === '#/';
+	const target = hrefWithBase(href);
+	if (href === '/') {
+		return normalizedPath === baseUrl;
+	}
+	return normalizedPath.startsWith(target);
+}
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="description" content={description} />
+		<meta name="theme-color" content="#fff4f7" />
+		<link rel="icon" type="image/svg+xml" href={`${baseUrl}favicon.svg`} />
+		<meta name="generator" content={Astro.generator} />
+		<title>{pageTitle}</title>
+	</head>
+	<body>
+		<div class="auth-boot" data-auth-boot aria-hidden="true"></div>
+
+		<section class="auth-gate" data-auth-gate aria-label="登录" hidden>
+			<div class="auth-card">
+				<p class="auth-eyebrow">Private Area</p>
+				<h1>选择账号</h1>
+
+				<div class="auth-options" role="group" aria-label="选择登录账号">
+					<button class="auth-option auth-option-black" type="button" data-account-option="black">
+						<span data-account-label="black">黑色账号</span>
+					</button>
+					<button class="auth-option auth-option-white" type="button" data-account-option="white">
+						<span data-account-label="white">白色账号</span>
+					</button>
+				</div>
+
+				<form class="auth-form" data-auth-form hidden>
+					<label>
+						<span>密码</span>
+						<input type="password" name="password" autocomplete="current-password" required />
+					</label>
+					<button type="submit" data-auth-submit>解锁</button>
+				</form>
+
+				<p class="auth-status" role="status" data-auth-status></p>
+			</div>
+		</section>
+
+		<div class="app-shell" data-app-shell hidden inert>
+			<div class="nav-peek-zone" aria-hidden="false">
+				<button class="nav-toggle" type="button" aria-label="隐藏导航栏" data-nav-toggle>
+					<svg class="eye-shape eye-open" aria-hidden="true" viewBox="0 0 32 18">
+						<path d="M2 9C6.2 3.6 10.8 1.5 16 1.5S25.8 3.6 30 9c-4.2 5.4-8.8 7.5-14 7.5S6.2 14.4 2 9Z" />
+						<circle cx="16" cy="9" r="4.1" />
+					</svg>
+					<svg class="eye-shape eye-closed" aria-hidden="true" viewBox="0 0 32 18">
+						<path d="M3 10.8C7.3 14.2 11.6 15.6 16 15.6s8.7-1.4 13-4.8" />
+						<path d="M8.1 13.7l-1.9 2.6" />
+						<path d="M16 15.6v2.8" />
+						<path d="M23.9 13.7l1.9 2.6" />
+					</svg>
+				</button>
+			</div>
+
+			<header class="site-header" data-site-header>
+				<div class="site-header-inner">
+					<div class="site-title-row">
+						<a class="site-title" href={`${baseUrl}#/`}>lzx's zty</a>
+
+						<div class="site-actions">
+							<div class="site-settings" data-site-settings>
+								<button
+									class="icon-button settings-button"
+									type="button"
+									aria-label="设置"
+									aria-expanded="false"
+									data-settings-toggle
+								>
+									<svg aria-hidden="true" viewBox="0 0 24 24">
+										<path d="M12 15.5A3.5 3.5 0 1 0 12 8a3.5 3.5 0 0 0 0 7.5Z" />
+										<path
+											d="M19.4 15a1.7 1.7 0 0 0 .34 1.87l.05.05a2 2 0 0 1-2.83 2.83l-.05-.05a1.7 1.7 0 0 0-1.87-.34 1.7 1.7 0 0 0-1.04 1.57V21a2 2 0 0 1-4 0v-.07a1.7 1.7 0 0 0-1.04-1.57 1.7 1.7 0 0 0-1.87.34l-.05.05a2 2 0 0 1-2.83-2.83l.05-.05A1.7 1.7 0 0 0 4.6 15a1.7 1.7 0 0 0-1.57-1.04H3a2 2 0 0 1 0-4h.03A1.7 1.7 0 0 0 4.6 8.92a1.7 1.7 0 0 0-.34-1.87l-.05-.05a2 2 0 0 1 2.83-2.83l.05.05a1.7 1.7 0 0 0 1.87.34A1.7 1.7 0 0 0 10 3.03V3a2 2 0 0 1 4 0v.03a1.7 1.7 0 0 0 1.04 1.57 1.7 1.7 0 0 0 1.87-.34l.05-.05a2 2 0 0 1 2.83 2.83l-.05.05a1.7 1.7 0 0 0-.34 1.87A1.7 1.7 0 0 0 20.97 10H21a2 2 0 0 1 0 4h-.03A1.7 1.7 0 0 0 19.4 15Z"
+										/>
+									</svg>
+								</button>
+								<div class="settings-popover" data-settings-popover>
+									<div class="settings-group">
+										<span class="settings-label">导航显示</span>
+										<div class="mode-control">
+											<span aria-label="emoji 模式">🐱</span>
+											<div
+												class="mode-switch"
+												role="button"
+												tabindex="0"
+												aria-label="切换导航显示模式"
+												data-mode-switch
+											>
+												<button class="mode-button" type="button" data-mode-option="emoji" aria-label="Emoji"></button>
+												<button class="mode-button" type="button" data-mode-option="text" aria-label="文字"></button>
+											</div>
+											<span>咪</span>
+										</div>
+									</div>
+
+									<div class="settings-group">
+										<span class="settings-label">主题颜色</span>
+										<div class="theme-buttons" role="group" aria-label="主题颜色">
+											<button
+												class="theme-button theme-pink"
+												type="button"
+												data-theme-option="pink"
+												aria-label="浅粉色"
+											></button>
+											<button
+												class="theme-button theme-paper"
+												type="button"
+												data-theme-option="paper"
+												aria-label="黄色"
+											></button>
+											<button
+												class="theme-button theme-blue"
+												type="button"
+												data-theme-option="blue"
+												aria-label="蓝色"
+											></button>
+											<button
+												class="theme-button theme-sage"
+												type="button"
+												data-theme-option="sage"
+												aria-label="绿色"
+											></button>
+										</div>
+									</div>
+								</div>
+							</div>
+
+							<button class="icon-button sign-out-button" type="button" aria-label="退出" data-sign-out>
+								<svg aria-hidden="true" viewBox="0 0 24 24">
+									<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+									<path d="M16 17l5-5-5-5" />
+									<path d="M21 12H9" />
+								</svg>
+							</button>
+						</div>
+					</div>
+
+					<nav class="site-nav" aria-label="主导航">
+						{
+							navItems.map((item) => (
+								<a href={hrefWithBase(item.href)} aria-current={isActive(item.href) ? 'page' : undefined}>
+									<span class="nav-label">{item.label}</span>
+									<span class="nav-emoji" aria-label={item.label}>
+										{item.emoji}
+									</span>
+								</a>
+							))
+						}
+					</nav>
+				</div>
+			</header>
+
+			<slot />
+		</div>
+		<script>
+			import { isSupabaseConfigured, supabase } from '../lib/supabase';
+
+			const accountConfig = {
+				black: {
+					email: import.meta.env.PUBLIC_AUTH_BLACK_EMAIL || '',
+					label: import.meta.env.PUBLIC_AUTH_BLACK_LABEL || '黑色账号',
+				},
+				white: {
+					email: import.meta.env.PUBLIC_AUTH_WHITE_EMAIL || '',
+					label: import.meta.env.PUBLIC_AUTH_WHITE_LABEL || '白色账号',
+				},
+			};
+
+			const appShell = document.querySelector('[data-app-shell]');
+			const authBoot = document.querySelector('[data-auth-boot]');
+			const authGate = document.querySelector('[data-auth-gate]');
+			const authForm = document.querySelector('[data-auth-form]');
+			const authStatus = document.querySelector('[data-auth-status]');
+			const authSubmit = document.querySelector('[data-auth-submit]');
+			const passwordInput = authForm?.querySelector('input[name="password"]');
+			const accountButtons = Array.from(document.querySelectorAll('[data-account-option]'));
+			const signOutButton = document.querySelector('[data-sign-out]');
+			let selectedAccount = null;
+
+			function setAuthStatus(message, state = 'idle') {
+				if (!(authStatus instanceof HTMLElement)) return;
+				authStatus.textContent = message;
+				authStatus.dataset.state = state;
+			}
+
+			function getAllowedEmails() {
+				return Object.values(accountConfig)
+					.map((account) => account.email.trim().toLowerCase())
+					.filter(Boolean);
+			}
+
+			function isAllowedEmail(email) {
+				return getAllowedEmails().includes(String(email || '').toLowerCase());
+			}
+
+			function getAccountIdForEmail(email) {
+				const normalized = String(email || '').toLowerCase();
+				if (normalized === accountConfig.black.email.trim().toLowerCase()) return 'black';
+				if (normalized === accountConfig.white.email.trim().toLowerCase()) return 'white';
+				return '';
+			}
+
+			function revealApp(email) {
+				const accountId = getAccountIdForEmail(email);
+				authBoot?.setAttribute('hidden', '');
+				authGate?.setAttribute('hidden', '');
+				appShell?.removeAttribute('hidden');
+				appShell?.removeAttribute('inert');
+				document.documentElement.dataset.authState = 'unlocked';
+				document.documentElement.dataset.accountId = accountId;
+				window.dispatchEvent(
+					new CustomEvent('lzxszty:auth-ready', {
+						detail: { accountId, email },
+					}),
+				);
+			}
+
+			function lockApp(message = '') {
+				authBoot?.setAttribute('hidden', '');
+				appShell?.setAttribute('hidden', '');
+				appShell?.setAttribute('inert', '');
+				authGate?.removeAttribute('hidden');
+				document.documentElement.dataset.authState = 'locked';
+				delete document.documentElement.dataset.accountId;
+				setAuthStatus(message);
+				window.dispatchEvent(new CustomEvent('lzxszty:auth-locked'));
+			}
+
+			function setSubmitting(submitting) {
+				if (authSubmit instanceof HTMLButtonElement) {
+					authSubmit.disabled = submitting;
+					authSubmit.textContent = submitting ? '验证中' : '解锁';
+				}
+			}
+
+			function selectAccount(accountId) {
+				selectedAccount = accountId;
+				accountButtons.forEach((button) => {
+					const isSelected = button instanceof HTMLElement && button.dataset.accountOption === selectedAccount;
+					button.classList.toggle('is-selected', isSelected);
+					button.classList.toggle('is-dimmed', !isSelected);
+					button.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+				});
+				authForm?.removeAttribute('hidden');
+				setAuthStatus('');
+				if (passwordInput instanceof HTMLInputElement) passwordInput.focus();
+			}
+
+			Object.entries(accountConfig).forEach(([id, account]) => {
+				const label = document.querySelector(`[data-account-label="${id}"]`);
+				if (label) label.textContent = account.label;
+			});
+
+			accountButtons.forEach((button) => {
+				button.addEventListener('click', () => {
+					if (!(button instanceof HTMLElement)) return;
+					selectAccount(button.dataset.accountOption);
+				});
+			});
+
+			if (!isSupabaseConfigured || !supabase) {
+				lockApp('Supabase 环境变量未配置，不能登录。');
+			} else {
+				const allowedEmails = getAllowedEmails();
+				if (allowedEmails.length !== 2) {
+					lockApp('两个账号邮箱还没有配置完整。');
+				}
+
+				const { data } = await supabase.auth.getSession();
+				if (data.session?.user?.email && isAllowedEmail(data.session.user.email)) {
+					revealApp(data.session.user.email);
+				} else {
+					lockApp();
+				}
+
+				authForm?.addEventListener('submit', async (event) => {
+					event.preventDefault();
+					if (!selectedAccount) {
+						setAuthStatus('先选择一个账号。', 'error');
+						return;
+					}
+
+					const account = accountConfig[selectedAccount];
+					const password =
+						passwordInput instanceof HTMLInputElement ? passwordInput.value : '';
+
+					if (!account?.email) {
+						setAuthStatus('这个账号的邮箱还没有配置。', 'error');
+						return;
+					}
+
+					setSubmitting(true);
+					setAuthStatus('');
+
+					const { data: signInData, error } = await supabase.auth.signInWithPassword({
+						email: account.email,
+						password,
+					});
+
+					if (error || !signInData.session?.user?.email || !isAllowedEmail(signInData.session.user.email)) {
+						setAuthStatus('密码不正确，或者账号没有权限。', 'error');
+						setSubmitting(false);
+						return;
+					}
+
+					if (passwordInput instanceof HTMLInputElement) passwordInput.value = '';
+					revealApp(signInData.session.user.email);
+					setSubmitting(false);
+				});
+
+				signOutButton?.addEventListener('click', async () => {
+					await supabase.auth.signOut();
+					lockApp();
+				});
+
+				supabase.auth.onAuthStateChange((_event, session) => {
+					if (session?.user?.email && isAllowedEmail(session.user.email)) {
+						revealApp(session.user.email);
+					} else {
+						lockApp();
+					}
+				});
+			}
+		</script>
+		<script>
+			const root = document.documentElement;
+			const navToggle = document.querySelector('[data-nav-toggle]');
+			const modeSwitch = document.querySelector('[data-mode-switch]');
+			const settings = document.querySelector('[data-site-settings]');
+			const settingsToggle = document.querySelector('[data-settings-toggle]');
+			const themes = {
+				pink: {
+					accent: '#d8849a',
+					strong: '#b96378',
+					soft: '#fff4f7',
+					wash: '#fff8fa',
+					text: '#3f3136',
+					muted: '#745f67',
+				},
+				blue: {
+					accent: '#7fa8d8',
+					strong: '#4f7faf',
+					soft: '#eef7ff',
+					wash: '#f7fbff',
+					text: '#283846',
+					muted: '#607485',
+				},
+				sage: {
+					accent: '#8aaa86',
+					strong: '#607f5d',
+					soft: '#f2f8f0',
+					wash: '#fbfdf8',
+					text: '#2f3b31',
+					muted: '#657264',
+				},
+				paper: {
+					accent: '#c7a876',
+					strong: '#957446',
+					soft: '#fbf5e8',
+					wash: '#fffdf8',
+					text: '#40372b',
+					muted: '#756a5b',
+				},
+			};
+
+			function applyTheme(name) {
+				const theme = themes[name] || themes.pink;
+				root.style.setProperty('--accent', theme.accent);
+				root.style.setProperty('--accent-strong', theme.strong);
+				root.style.setProperty('--accent-soft', theme.soft);
+				root.style.setProperty('--accent-wash', theme.wash);
+				root.style.setProperty('--text', theme.text);
+				root.style.setProperty('--muted', theme.muted);
+				root.style.setProperty('--line', `color-mix(in srgb, ${theme.strong} 22%, transparent)`);
+				localStorage.setItem('lzxszty-theme', name);
+				document.querySelectorAll('[data-theme-option]').forEach((button) => {
+					button.toggleAttribute('aria-pressed', button.dataset.themeOption === name);
+				});
+			}
+
+			function applyMode(mode) {
+				root.dataset.navMode = mode === 'emoji' ? 'emoji' : 'text';
+				localStorage.setItem('lzxszty-nav-mode', root.dataset.navMode);
+				document.querySelectorAll('[data-mode-option]').forEach((button) => {
+					button.toggleAttribute('aria-pressed', button.dataset.modeOption === root.dataset.navMode);
+				});
+				modeSwitch?.setAttribute('aria-pressed', root.dataset.navMode === 'text' ? 'true' : 'false');
+			}
+
+			function applyHidden(hidden) {
+				root.dataset.navHidden = hidden ? 'true' : 'false';
+				if (navToggle) {
+					navToggle.setAttribute('aria-label', hidden ? '显示导航栏' : '隐藏导航栏');
+				}
+				localStorage.setItem('lzxszty-nav-hidden', hidden ? 'true' : 'false');
+			}
+
+			function closeSettings() {
+				settings?.setAttribute('data-settings-open', 'false');
+				settingsToggle?.setAttribute('aria-expanded', 'false');
+			}
+
+			function toggleSettings() {
+				const open = settings?.getAttribute('data-settings-open') === 'true';
+				settings?.setAttribute('data-settings-open', open ? 'false' : 'true');
+				settingsToggle?.setAttribute('aria-expanded', open ? 'false' : 'true');
+			}
+
+			applyTheme(localStorage.getItem('lzxszty-theme') || 'pink');
+			applyMode(localStorage.getItem('lzxszty-nav-mode') || 'emoji');
+			applyHidden(localStorage.getItem('lzxszty-nav-hidden') === 'true');
+			closeSettings();
+
+			document.querySelectorAll('[data-theme-option]').forEach((button) => {
+				button.addEventListener('click', () => applyTheme(button.dataset.themeOption));
+			});
+
+			document.querySelectorAll('[data-mode-option]').forEach((button) => {
+				button.addEventListener('click', () => applyMode(button.dataset.modeOption));
+			});
+
+			modeSwitch?.addEventListener('click', (event) => {
+				if (event.target instanceof HTMLElement && event.target.matches('[data-mode-option]')) return;
+				applyMode(root.dataset.navMode === 'emoji' ? 'text' : 'emoji');
+			});
+
+			modeSwitch?.addEventListener('keydown', (event) => {
+				if (!(event instanceof KeyboardEvent) || (event.key !== 'Enter' && event.key !== ' ')) return;
+				event.preventDefault();
+				applyMode(root.dataset.navMode === 'emoji' ? 'text' : 'emoji');
+			});
+
+			navToggle?.addEventListener('click', () => {
+				applyHidden(root.dataset.navHidden !== 'true');
+			});
+
+			settingsToggle?.addEventListener('click', (event) => {
+				event.stopPropagation();
+				toggleSettings();
+			});
+
+			settings?.addEventListener('click', (event) => {
+				event.stopPropagation();
+			});
+
+			document.addEventListener('click', () => closeSettings());
+
+			document.addEventListener('keydown', (event) => {
+				if (event.key === 'Escape') closeSettings();
+			});
+		</script>
+	</body>
+</html>
